@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('e_c_s', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->id(); // Clé primaire
+            $table->string('code'); // Code de l'EC
+            $table->string('nom'); // Nom de l'EC
+            $table->integer('coefficient'); // Coefficient de l'EC
+            $table->foreignId('ue_id')->constrained('u_e_s'); // Clé étrangère vers `u_e_s` (UE)
+            $table->timestamps(); // Date de création et mise à jour
         });
     }
 
