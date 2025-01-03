@@ -27,4 +27,31 @@ class UE extends Model
     {
         return $this->hasMany(EC::class, 'ue_id');
     }
+	public function moyenneParEtudiant($etudiantId)
+{
+    $totalNotes = 0;
+    $totalCoefficients = 0;
+
+    foreach ($this->elementsConstitutifs as $ec) {
+        $note = $ec->notes()->where('etudiant_id', $etudiantId)->where('session', 'normale')->first();
+
+        if ($note) {
+            $totalNotes += $note->note * $ec->coefficient;
+            $totalCoefficients += $ec->coefficient;
+        }
+    }
+
+    return $totalCoefficients > 0 ? $totalNotes / $totalCoefficients : 0;
+}
+ public function elementsConstitutifs()
+{
+    return $this->hasMany(EC::class, 'ue_id');
+}
+
+public function estValidee($etudiantId)
+{
+    return $this->moyenneParEtudiant($etudiantId) >= 10;
+}
+
+
 }

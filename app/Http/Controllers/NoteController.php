@@ -6,6 +6,8 @@ use App\Models\Note;
 use App\Models\Etudiant;
 use App\Models\ElementConstitutif;
 use Illuminate\Http\Request;
+use App\Models\EC;
+
 
 class NoteController extends Controller
 {
