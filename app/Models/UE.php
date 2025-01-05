@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class UE extends Model
 {
+    
     use HasFactory;
 
-    // Table associée
-    protected $table = 'unites_enseignement';  // Assure-toi que le nom de la table est correct
+    protected $table = 'u_e_s';  // Le nom de la table
 
-    // Spécifie les colonnes autorisées pour l'insertion en masse
     protected $fillable = [
         'code',
         'nom',

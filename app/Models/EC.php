@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,7 +10,7 @@ class EC extends Model
 {
     use HasFactory;
     // Table associée
-    protected $table = 'elements_constitutifs';  // Assure-toi que le nom de la table est correct
+    protected $table = 'e_c_s';  // Assure-toi que le nom de la table est correct
 
 
     // Spécifie les colonnes autorisées pour l'insertion en masse

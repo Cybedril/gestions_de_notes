@@ -45,19 +45,52 @@ class NoteController extends Controller
     }
     // App\Http\Controllers\NoteController.php
 
-public function calculerMoyenne($etudiantId)
-{
-    $etudiant = Etudiant::findOrFail($etudiantId);
-    $notes = Note::where('etudiant_id', $etudiantId)->get();
-
-    $moyenne = $notes->avg('note');
-    $notesParSession = $notes->groupBy('session')->map(function ($sessionNotes) {
-        return $sessionNotes->avg('note');
-    });
-
-    return view('notes.moyenne', compact('etudiant', 'moyenne', 'notesParSession'));
-}
-
+    public function calculerMoyenne($etudiantId)
+    {
+        $etudiant = Etudiant::findOrFail($etudiantId);
+    
+        // Récupère les notes de l'étudiant
+        $notes = Note::where('etudiant_id', $etudiant->id)->get();
+    
+        // Calcul de la moyenne globale
+        $totalNotes = $notes->sum('note');
+        $nombreDeNotes = $notes->count();
+    
+        // Vérifie si l'étudiant a des notes
+        if ($nombreDeNotes > 0) {
+            $moyenneGlobale = $totalNotes / $nombreDeNotes;
+        } else {
+            $moyenneGlobale = 0;
+        }
+    
+        // Moyennes par session
+        $notesParSession = [];
+        foreach ($notes as $note) {
+            if ($note->session) {
+                $session = $note->session->nom; // Assure-toi que ta table `notes` contient la relation vers `session`
+                if (!isset($notesParSession[$session])) {
+                    $notesParSession[$session] = [];
+                }
+                $notesParSession[$session][] = $note->note;
+            }
+        }
+    
+        // Calcul des moyennes par session
+        $moyenneParSession = [];
+        foreach ($notesParSession as $session => $sessionNotes) {
+            $moyenneParSession[$session] = array_sum($sessionNotes) / count($sessionNotes);
+        }
+    
+        // Retourner la vue avec les données
+        return view('notes.moyenne', [
+            'etudiant' => $etudiant,
+            'moyenneGlobale' => $moyenneGlobale,
+            'moyenneParSession' => $moyenneParSession,
+            'notesParSession' => $notesParSession, // Ajout de cette ligne pour être sûr que la variable est définie
+        ]);
+    }
+    
+    
 public function show($id)
 {
     // Récupérer les informations de l'étudiant par son ID
