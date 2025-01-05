@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\EC;
 use App\Models\UE;
+use App\Models\Etudiant; // Si vous voulez aussi passer les étudiants dans le formulaire de création
 
 class ECController extends Controller
 {
@@ -19,8 +20,14 @@ class ECController extends Controller
     // Affiche le formulaire de création d'un EC
     public function create()
     {
-        $ues = UE::all(); // Pour sélectionner l'UE lors de la création
-        return view('ecs.create', compact('ues'));
+        // Récupérer tous les EC (Éléments Constituants)
+        $ecs = EC::all();
+
+        // Récupérer tous les étudiants (si nécessaire pour le formulaire)
+        $etudiants = Etudiant::all();
+
+        // Passer les EC et les étudiants à la vue du formulaire d'ajout de note
+        return view('notes.create', compact('ecs', 'etudiants'));
     }
 
     // Stocke un nouvel EC
@@ -45,24 +52,25 @@ class ECController extends Controller
     public function edit($id)
     {
         $ec = EC::findOrFail($id);
-        $ues = UE::all();
+        $ues = UE::all(); // Liste des UEs
         return view('ecs.edit', compact('ec', 'ues'));
     }
 
+    // Affiche les détails d'un EC avec ses UE associés
     public function show($id)
-{
-    // Trouver l'UE spécifique
-    $ue = UE::find($id);  
+    {
+        // Trouver l'UE spécifique
+        $ue = UE::find($id);  
 
-    if (!$ue) {
-        return redirect()->route('ecs.index')->with('error', 'UE non trouvée');
+        if (!$ue) {
+            return redirect()->route('ecs.index')->with('error', 'UE non trouvée');
+        }
+
+        // Récupérer tous les ECs associés à cette UE
+        $ecs = $ue->ecs; 
+
+        return view('ecs.show', compact('ue', 'ecs')); // Passer l'UE et ses ECs à la vue
     }
-
-    // Récupérer tous les ECs associés à cette UE
-    $ecs = $ue->ecs; 
-
-    return view('ecs.show', compact('ue', 'ecs')); // Passer l'UE et ses ECs à la vue
-}
 
     // Met à jour un EC existant
     public function update(Request $request, $id)
