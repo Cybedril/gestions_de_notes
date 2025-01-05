@@ -5,29 +5,24 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\EC;
 use App\Models\UE;
-use App\Models\Etudiant; // Si vous voulez aussi passer les étudiants dans le formulaire de création
+use App\Models\Etudiant; // Si nécessaire pour les formulaires
 
 class ECController extends Controller
 {
-    // Affiche la liste des ECs et les UEs pour le formulaire
+    // Affiche la liste des ECs
     public function index()
     {
-        $ecs = EC::with('ue')->get(); 
-        $ues = UE::all(); // Liste des UEs pour l'affichage dans le formulaire
-        return view('ecs.index', compact('ecs', 'ues'));
+        $ecs = EC::with('ue')->get(); // Récupère tous les ECs avec les UEs associés
+        return view('ecs.index', compact('ecs'));
     }
 
     // Affiche le formulaire de création d'un EC
     public function create()
     {
-        // Récupérer tous les EC (Éléments Constituants)
-        $ecs = EC::all();
+        // Récupérer toutes les UEs disponibles
+        $ues = UE::all(); 
 
-        // Récupérer tous les étudiants (si nécessaire pour le formulaire)
-        $etudiants = Etudiant::all();
-
-        // Passer les EC et les étudiants à la vue du formulaire d'ajout de note
-        return view('notes.create', compact('ecs', 'etudiants'));
+        return view('ecs.create', compact('ues'));
     }
 
     // Stocke un nouvel EC
@@ -35,41 +30,25 @@ class ECController extends Controller
     {
         // Validation des données
         $validated = $request->validate([
-            'code' => 'required|unique:elements_constitutifs,code',
+            'code' => 'required|unique:e_c_s,code',  // Vérifier l'unicité du code dans la table EC
             'nom' => 'required|string',
             'coefficient' => 'required|integer|between:1,5',
-            'ue_id' => 'required|exists:unites_enseignement,id',
+            'ue_id' => 'required|exists:u_e_s,id',  // Vérifier l'existence de l'UE
         ]);
 
         // Création de l'EC avec les données validées
         EC::create($validated);
 
-        // Rediriger vers la page d'index avec un message de succès
+        // Rediriger vers la page de liste des ECs avec un message de succès
         return redirect()->route('ecs.index')->with('success', 'L\'EC a été ajouté avec succès!');
     }
 
     // Affiche le formulaire d'édition d'un EC
     public function edit($id)
     {
-        $ec = EC::findOrFail($id);
-        $ues = UE::all(); // Liste des UEs
+        $ec = EC::findOrFail($id); // Récupère l'EC à éditer
+        $ues = UE::all(); // Liste des UEs disponibles
         return view('ecs.edit', compact('ec', 'ues'));
-    }
-
-    // Affiche les détails d'un EC avec ses UE associés
-    public function show($id)
-    {
-        // Trouver l'UE spécifique
-        $ue = UE::find($id);  
-
-        if (!$ue) {
-            return redirect()->route('ecs.index')->with('error', 'UE non trouvée');
-        }
-
-        // Récupérer tous les ECs associés à cette UE
-        $ecs = $ue->ecs; 
-
-        return view('ecs.show', compact('ue', 'ecs')); // Passer l'UE et ses ECs à la vue
     }
 
     // Met à jour un EC existant
@@ -80,14 +59,14 @@ class ECController extends Controller
             'code' => 'required',
             'nom' => 'required|string',
             'coefficient' => 'required|integer|between:1,5',
-            'ue_id' => 'required|exists:unites_enseignement,id',
+            'ue_id' => 'required|exists:u_e_s,id',  // Vérification de l'UE
         ]);
 
-        // Récupération de l'EC et mise à jour
+        // Récupération et mise à jour de l'EC
         $ec = EC::findOrFail($id);
         $ec->update($validated);
 
-        // Rediriger avec un message de succès
+        // Rediriger vers la liste avec un message de succès
         return redirect()->route('ecs.index')->with('success', 'L\'EC a été mis à jour avec succès!');
     }
 
@@ -99,5 +78,19 @@ class ECController extends Controller
 
         // Rediriger avec un message de succès
         return redirect()->route('ecs.index')->with('success', 'EC supprimé avec succès.');
+    }
+
+    // Affiche les détails d'un EC avec ses UE associés
+    public function show($id)
+    {
+        // Trouver l'EC avec ses informations associées
+        $ec = EC::with('ue')->find($id);
+
+        if (!$ec) {
+            return redirect()->route('ecs.index')->with('error', 'EC non trouvé');
+        }
+
+        // Passer l'EC et son UE associé à la vue
+        return view('ecs.show', compact('ec'));
     }
 }

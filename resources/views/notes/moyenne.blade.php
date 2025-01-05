@@ -11,51 +11,51 @@
     <div class="container mx-auto p-6">
         <h1 class="text-4xl font-semibold text-center text-gray-800 mb-8">Détails de la Moyenne de l'Étudiant</h1>
 
-        <div class="bg-white p-6 shadow-md rounded-lg">
+        <div class="bg-white p-6 shadow-lg rounded-lg">
             <!-- Tableau des informations de l'étudiant -->
-            <table class="min-w-full bg-white">
-                <thead>
+            <table class="min-w-full bg-white border-separate border-spacing-0 shadow-md rounded-lg">
+                <thead class="bg-blue-500 text-white">
                     <tr>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">ID</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Numéro Étudiant</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Nom</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Prénom</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Niveau</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Moyenne Globale</th>
+                        <th class="px-6 py-3 text-left font-medium">ID</th>
+                        <th class="px-6 py-3 text-left font-medium">Numéro Étudiant</th>
+                        <th class="px-6 py-3 text-left font-medium">Nom</th>
+                        <th class="px-6 py-3 text-left font-medium">Prénom</th>
+                        <th class="px-6 py-3 text-left font-medium">Niveau</th>
+                        <th class="px-6 py-3 text-left font-medium">Moyenne Globale</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td class="px-6 py-4">{{ $etudiant->id }}</td>
-                        <td class="px-6 py-4">{{ $etudiant->matricule }}</td>
-                        <td class="px-6 py-4">{{ $etudiant->nom }}</td>
-                        <td class="px-6 py-4">{{ $etudiant->prenom }}</td>
-                        <td class="px-6 py-4">{{ $etudiant->niveau }}</td>
-                        <td class="px-6 py-4">{{ number_format($moyenneGlobale, 2) }}</td>
+                <tbody class="text-gray-700">
+                    <tr class="hover:bg-gray-100">
+                        <td class="px-6 py-4 border-t border-gray-200">{{ $etudiant->id }}</td>
+                        <td class="px-6 py-4 border-t border-gray-200">{{ $etudiant->matricule }}</td>
+                        <td class="px-6 py-4 border-t border-gray-200">{{ $etudiant->nom }}</td>
+                        <td class="px-6 py-4 border-t border-gray-200">{{ $etudiant->prenom }}</td>
+                        <td class="px-6 py-4 border-t border-gray-200">{{ $etudiant->niveau }}</td>
+                        <td class="px-6 py-4 border-t border-gray-200">{{ number_format($moyenneGlobale, 2) }}</td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- Moyenne par session -->
-            <h3 class="mt-6 text-xl font-semibold">Moyenne par session</h3>
-            <table class="min-w-full bg-white mt-4">
-                <thead>
+            <h3 class="mt-6 text-xl font-semibold text-gray-800">Moyenne par session</h3>
+            <table class="min-w-full bg-white mt-4 border-separate border-spacing-0 shadow-md rounded-lg">
+                <thead class="bg-green-500 text-white">
                     <tr>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Session</th>
-                        <th class="px-6 py-3 text-left font-medium text-gray-500">Moyenne</th>
+                        <th class="px-6 py-3 text-left font-medium">Session</th>
+                        <th class="px-6 py-3 text-left font-medium">Moyenne</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-gray-700">
                     @if (!empty($notesParSession))
                         @foreach ($notesParSession as $session => $moyenneSession)
-                            <tr>
-                                <td class="px-6 py-4">{{ ucfirst($session) }}</td>
-                                <td class="px-6 py-4">{{ number_format($moyenneSession, 2) }}</td>
+                            <tr class="hover:bg-gray-100">
+                                <td class="px-6 py-4 border-t border-gray-200">{{ ucfirst($session) }}</td>
+                                <td class="px-6 py-4 border-t border-gray-200">{{ number_format($moyenneSession, 2) }}</td>
                             </tr>
                         @endforeach
                     @else
                         <tr>
-                            <td class="px-6 py-4" colspan="2">Aucune note disponible pour cet étudiant.</td>
+                            <td class="px-6 py-4 border-t border-gray-200" colspan="2">Aucune note disponible pour cet étudiant.</td>
                         </tr>
                     @endif
                 </tbody>
@@ -63,7 +63,7 @@
 
             <!-- Bouton pour revenir à la liste des notes -->
             <div class="mt-6 text-center">
-                <a href="{{ route('notes.index') }}" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Retour à la liste des notes</a>
+                <a href="{{ route('notes.index') }}" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition duration-300">Retour à la liste des notes</a>
             </div>
         </div>
     </div>

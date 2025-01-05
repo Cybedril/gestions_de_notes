@@ -3,88 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une note</title>
+    <title>Ajouter une Note</title>
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-100 text-gray-800">
-    <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold text-center mb-8">Ajouter une note</h1>
+<body class="bg-gray-100 text-gray-900">
 
-        @if (session('success'))
-            <div class="bg-green-200 p-4 rounded-md mb-4 text-green-700">
-                {{ session('success') }}
+    <div class="container mx-auto p-6">
+        <h1 class="text-4xl font-semibold text-center text-gray-800 mb-8">Ajouter une Note</h1>
+
+        <!-- Affichage des messages d'erreur de validation -->
+        @if($errors->any())
+            <div class="mb-4 bg-red-100 text-red-700 p-4 rounded-lg">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
-        <form action="{{ route('notes.store') }}" method="POST" class="bg-white p-6 shadow-md rounded-lg">
+        <form action="{{ route('notes.store') }}" method="POST" class="space-y-6">
             @csrf
 
+            <!-- Sélection Étudiant -->
             <div class="mb-4">
-                <label for="etudiant_id" class="block text-sm font-medium text-gray-700">Sélectionner un étudiant</label>
-                <select name="etudiant_id" id="etudiant_id" 
-                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    onchange="redirectToEtudiantPage()">
-                    <option value="">Choisir un étudiant</option>
-                    @foreach ($etudiants as $etudiant)
+                <label for="etudiant_id" class="block text-sm font-medium text-gray-700">Étudiant</label>
+                <select name="etudiant_id" id="etudiant_id" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                    @foreach($etudiants as $etudiant)
                         <option value="{{ $etudiant->id }}">{{ $etudiant->nom }} {{ $etudiant->prenom }}</option>
                     @endforeach
                 </select>
                 @error('etudiant_id')
-                    <span class="text-red-500 text-xs mt-2">{{ $message }}</span>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
+            <!-- Sélection EC -->
             <div class="mb-4">
-    <label for="ec_id" class="block text-sm font-medium text-gray-700">Sélectionner un EC</label>
-    <select name="ec_id" id="ec_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-        <option value="">Choisir un EC</option>
-        @foreach ($ecs as $ec)
-            <option value="{{ $ec->id }}">{{ $ec->name }}</option> <!-- Assure-toi que 'name' est le bon champ dans le modèle EC -->
-        @endforeach
-    </select>
-    @error('ec_id')
-        <span class="text-red-500 text-xs mt-2">{{ $message }}</span>
-    @enderror
-</div>
+                <label for="ec_id" class="block text-sm font-medium text-gray-700">EC</label>
+                <select name="ec_id" id="ec_id" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                    @foreach($ecs as $ec)
+                        <option value="{{ $ec->id }}">{{ $ec->nom }}</option>
+                    @endforeach
+                </select>
+                @error('ec_id')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
+            <!-- Sélection UE -->
+            <div class="mb-4">
+                <label for="ue_id" class="block text-sm font-medium text-gray-700">UE</label>
+                <select name="ue_id" id="ue_id" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                    @foreach($ues as $ue)
+                        <option value="{{ $ue->id }}">{{ $ue->nom }}</option>
+                    @endforeach
+                </select>
+                @error('ue_id')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
 
+            <!-- Saisie de la Note -->
             <div class="mb-4">
                 <label for="note" class="block text-sm font-medium text-gray-700">Note</label>
-                <input type="number" name="note" id="note" min="0" max="20" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="number" name="note" id="note" min="0" max="20" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
                 @error('note')
-                    <span class="text-red-500 text-xs mt-2">{{ $message }}</span>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
+            <!-- Sélection Session -->
             <div class="mb-4">
                 <label for="session" class="block text-sm font-medium text-gray-700">Session</label>
-                <select name="session" id="session" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                    <option value="normale">Normale</option>
-                    <option value="rattrapage">Rattrapage</option>
+                <select name="session" id="session" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                    <option value="Normal">Normal</option>
+                    <option value="Rattrapage">Rattrapage</option>
                 </select>
                 @error('session')
-                    <span class="text-red-500 text-xs mt-2">{{ $message }}</span>
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                 @enderror
             </div>
 
-            <div class="mb-4 text-center">
-                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Ajouter la note</button>
+            <!-- Date d'Évaluation -->
+            <div class="mb-4">
+                <label for="date_evaluation" class="block text-sm font-medium text-gray-700">Date d'Évaluation</label>
+                <input type="date" name="date_evaluation" id="date_evaluation" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required>
+                @error('date_evaluation')
+                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
-        </form>
 
-        <div class="mt-6 text-center">
-            <a href="{{ route('notes.index') }}" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Retour à la liste des notes</a>
-        </div>
+            <!-- Bouton de soumission -->
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:ring-4 focus:ring-blue-300">Ajouter la note</button>
+        </form>
     </div>
 
-    <script>
-        function redirectToEtudiantPage() {
-            var etudiantId = document.getElementById("etudiant_id").value;
-            if (etudiantId) {
-                // Redirige vers la page des détails de l'étudiant
-                window.location.href = '/etudiants/' + etudiantId;
-            }
-        }
-    </script>
 </body>
 </html>

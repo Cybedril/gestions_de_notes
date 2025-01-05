@@ -3,48 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liste des Notes</title>
+    <title>Liste des notes</title>
     @vite('resources/css/app.css')
 </head>
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-100 text-gray-800">
+    <div class="container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-center mb-8">Liste des notes</h1>
 
-    <div class="container mx-auto p-6">
-        <h1 class="text-4xl font-semibold text-center text-gray-800 mb-8">Liste des Notes</h1>
+        @if (session('success'))
+            <div class="bg-green-200 p-4 rounded-md mb-4 text-green-700">
+                {{ session('success') }}
+            </div>
+        @endif
 
-        <!-- Bouton pour ajouter une note -->
-        <div class="mb-4 text-right">
+        <div class="mb-6 text-center">
             <a href="{{ route('notes.create') }}" class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600">Ajouter une note</a>
         </div>
 
-        <div class="overflow-x-auto bg-white shadow-lg rounded-lg">
-            <table class="min-w-full table-auto">
-                <thead class="bg-blue-500 text-white">
+        <table class="min-w-full table-auto border-collapse">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 border-b">Étudiant</th>
+                    <th class="px-4 py-2 border-b">EC</th>
+                    <th class="px-4 py-2 border-b">Note</th>
+                    <th class="px-4 py-2 border-b">Session</th>
+                    <th class="px-4 py-2 border-b">UE</th>
+                    <th class="px-4 py-2 border-b">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($notes as $note)
                     <tr>
-                        <th class="px-6 py-3 text-left text-sm font-medium">Étudiant</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium">EC</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium">Note</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium">Session</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium">Date d'Évaluation</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium">Moyenne</th>
+                        <td class="px-4 py-2 border-b">{{ $note->etudiant->nom }} {{ $note->etudiant->prenom }}</td>
+                        <td class="px-4 py-2 border-b">{{ $note->ec->name }}</td>
+                        <td class="px-4 py-2 border-b">{{ $note->note }}</td>
+                        <td class="px-4 py-2 border-b">{{ ucfirst($note->session) }}</td>
+                        <td class="px-4 py-2 border-b">{{ $note->ue->nom }}</td>
+                        <td class="px-4 py-2 border-b">
+                            <a href="{{ route('notes.edit', $note->id) }}" class="text-blue-500">Modifier</a>
+                            <form action="{{ route('notes.destroy', $note->id) }}" method="POST" class="inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500">Supprimer</button>
+                            </form>
+                        </td>
                     </tr>
-                </thead>
-                <tbody class="bg-white">
-                    @foreach($notes as $note)
-                        <tr class="border-b">
-                            <td class="px-6 py-4">{{ $note->etudiant->nom }} {{ $note->etudiant->prenom }}</td>
-                            <td class="px-6 py-4">{{ $note->ec->nom }}</td>
-                            <td class="px-6 py-4">{{ $note->note }}</td>
-                            <td class="px-6 py-4">{{ ucfirst($note->session) }}</td>
-                            <td class="px-6 py-4">{{ \Carbon\Carbon::parse($note->date_evaluation)->format('d-m-Y') }}</td>
-                            <td class="px-6 py-4">
-                                {{ $note->etudiant->moyenne() }} <!-- Assurez-vous que la méthode moyenne() est définie dans le modèle Étudiant -->
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            </tbody>
+        </table>
     </div>
-
 </body>
 </html>
