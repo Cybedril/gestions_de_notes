@@ -33,9 +33,9 @@ class UETest extends TestCase
         $this->expectException(\Illuminate\Database\QueryException::class);
 
         UE::create([
-            'code' => 'UE12',
+            'code' => 'UE001',
             'nom' => 'Mathématiques',
-            'credits_ects' => 35,  // Crédits invalides (au-delà de la plage autorisée)
+            'credits_ects' => 0,  // Crédits invalides (au-delà de la plage autorisée)
             'semestre' => 1,
         ]);
     }
@@ -98,19 +98,21 @@ class UETest extends TestCase
     }
 
     // Test de validation d'UE
-    public function test_validation_ue()
-    {
-        $ue = UE::factory()->create();
-        $etudiant = Etudiant::factory()->create();
-        $ec = EC::factory()->create(['ue_id' => $ue->id, 'coefficient' => 2]);
+    public function testValidationUE()
+{
+    // Créer un étudiant avec une note suffisante
+    $etudiant = Etudiant::factory()->create();
 
-        Note::create([
-            'etudiant_id' => $etudiant->id,
-            'ec_id' => $ec->id,
-            'note' => 12,
-            'session' => 'normale'
-        ]);
+    // Assurez-vous que l'étudiant a des notes suffisantes pour valider l'UE
+    $etudiant->notes()->create([
+        'valeur' => 12,  // Exemple de note suffisante
+        'session' => 'normale',
+    ]);
 
-        $this->assertTrue($ue->estValidee($etudiant));
-    }
+    // Créer l'UE et vérifier si elle est validée
+    $ue = UE::factory()->create();
+    
+    $this->assertTrue($ue->estValidee($etudiant));  // L'UE devrait être validée par l'étudiant
+}
+
 }

@@ -23,26 +23,27 @@ class NoteController extends Controller
     }
  
     public function store(Request $request)
-    {
-        // Validation des données
-        $request->validate([
-            'etudiant_id' => 'required|exists:etudiants,id', // Validation que l'étudiant existe
-            'ec_id' => 'required|exists:elements_constitutifs,id', // Validation que l'EC existe
-            'note' => 'required|numeric|min:0|max:20', // Validation de la note entre 0 et 20
-        ]);
+{
+    $request->validate([
+        'etudiant_id' => 'required|exists:etudiants,id',
+        'ec_id' => 'required|exists:elements_constitutifs,id',
+        'note' => 'required|numeric|min:0|max:20',
+        'session' => 'required|in:normale,rattrapage',
+        'date_evaluation' => 'required|date',
+    ]);
 
-        // Création de la note
-        $note = new Note();
-        $note->etudiant_id = $request->etudiant_id;
-        $note->ec_id = $request->ec_id;
-        $note->note = $request->note;
-        $note->session = $request->session;
-        $note->date_evaluation = $request->date_evaluation;
-        $note->save();
+    $note = new Note([
+        'etudiant_id' => $request->etudiant_id,
+        'ec_id' => $request->ec_id,
+        'note' => $request->note,
+        'session' => $request->session,
+        'date_evaluation' => $request->date_evaluation,
+    ]);
 
-        // Redirection après enregistrement
-        return redirect()->route('notes.index');
-    }
+    $note->save();
+
+    return redirect()->route('notes.index')->with('success', 'Note ajoutée avec succès');
+}
     // App\Http\Controllers\NoteController.php
 
 public function calculerMoyenne($etudiantId)
@@ -84,7 +85,53 @@ public function show($id)
         'moyennesParSession' => $moyennesParSession,
     ]);
 }
+public function edit($id)
+{
+    $note = Note::findOrFail($id);
+    $etudiants = Etudiant::all();
+    $ecs = Ec::all();
+    return view('notes.edit', compact('note', 'etudiants', 'ecs'));
+}
 
+    public function results($id)
+    {
+        $note = Note::findOrFail($id); // Récupère la note
+        return view('notes.results', compact('notes')); // Passe la note à la vue
+    }
+
+    public function destroy($id)
+    {
+        $note = Note::findOrFail($id); // Récupère la note
+        $note->delete(); // Supprime la note
+
+        return redirect()->route('notes.index')->with('success', 'Note supprimée avec succès.');
+    }
+
+    public function update(Request $request, $id)
+{
+    // Valider les données envoyées
+    $request->validate([
+        'etudiant_id' => 'required|exists:etudiants,id',
+        'ec_id' => 'required|exists:ecs,id',
+        'note' => 'required|numeric|min:0|max:20',
+        'session' => 'required|in:normale,rattrapage',
+        'date_evaluation' => 'required|date', // Validation pour la date
+    ]);
+
+    // Trouver la note à mettre à jour
+    $note = Note::findOrFail($id);
+
+    // Mettre à jour les données de la note
+    $note->etudiant_id = $request->etudiant_id;
+    $note->ec_id = $request->ec_id;
+    $note->note = $request->note;
+    $note->session = $request->session;
+    $note->date_evaluation = $request->date_evaluation; // Mettre à jour la date d'évaluation
+    $note->save();
+
+    // Retourner à la liste des notes avec un message de succès
+    return redirect()->route('notes.index')->with('success', 'Note modifiée avec succès.');
+}
 
 
 }

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('elements_constitutifs', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->string('nom');
+            $table->string('nom')->default('Nom par défaut');
             $table->integer('coefficient');
             $table->foreignId('ue_id')->constrained('unites_enseignement')->onDelete('cascade');
             $table->timestamps();

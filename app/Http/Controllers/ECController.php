@@ -22,30 +22,35 @@ class ECController extends Controller
     {
         // Récupérer tous les EC (Éléments Constituants)
         $ecs = EC::all();
-
+        $ues = UE::all(); // Récupère toutes les UEs
         // Récupérer tous les étudiants (si nécessaire pour le formulaire)
         $etudiants = Etudiant::all();
 
         // Passer les EC et les étudiants à la vue du formulaire d'ajout de note
-        return view('notes.create', compact('ecs', 'etudiants'));
+        return view('ecs.create', compact('ues', 'etudiants'));
     }
 
     // Stocke un nouvel EC
     public function store(Request $request)
     {
-        // Validation des données
+        // Validation des données reçues (assurez-vous de valider les champs nécessaires)
         $validated = $request->validate([
-            'code' => 'required|unique:elements_constitutifs,code',
-            'nom' => 'required|string',
-            'coefficient' => 'required|integer|between:1,5',
-            'ue_id' => 'required|exists:unites_enseignement,id',
+            'code' => 'required',
+            'coefficient' => 'required|numeric',
+            'ue_id' => 'required|exists:unites_enseignements,id',  // Exemple de validation pour UE
+            'nom' => 'required|string',  // Ajoutez une validation pour 'nom'
         ]);
 
-        // Création de l'EC avec les données validées
-        EC::create($validated);
+        // Insertion des données dans la base de données
+        EC::create([
+            'code' => $validated['code'],
+            'coefficient' => $validated['coefficient'],
+            'ue_id' => $validated['ue_id'],
+            'nom' => $validated['nom'],  // Assurez-vous d'ajouter 'nom'
+        ]);
 
-        // Rediriger vers la page d'index avec un message de succès
-        return redirect()->route('ecs.index')->with('success', 'L\'EC a été ajouté avec succès!');
+        // Rediriger ou renvoyer une réponse
+        return redirect()->route('ecs.index')->with('success', 'EC ajouté avec succès.');
     }
 
     // Affiche le formulaire d'édition d'un EC

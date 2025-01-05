@@ -46,6 +46,7 @@ class ECTest extends TestCase
             'code' => 'EC16',
             'coefficient' => 2,
             'ue_id' => $ue->id,
+            
         ]);
 
         $this->assertEquals($ec->ue->id, $ue->id);

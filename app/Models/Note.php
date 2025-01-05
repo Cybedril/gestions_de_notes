@@ -10,7 +10,7 @@ class Note extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['etudiant_id', 'ec_id', 'note', 'session', 'date_evaluation'];
+    protected $fillable = ['etudiant_id','valeur', 'ec_id', 'note', 'session', 'date_evaluation'];
 
     public function etudiant()
     {
@@ -19,6 +19,6 @@ class Note extends Model
 
     public function ec()
     {
-        return $this->belongsTo(ElementConstitutif::class, 'ec_id');
+        return $this->belongsTo(EC::class, 'ec_id','id');
     }
 }

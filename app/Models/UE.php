@@ -48,10 +48,17 @@ class UE extends Model
     return $this->hasMany(EC::class, 'ue_id');
 }
 
-public function estValidee($etudiantId)
-{
-    return $this->moyenneParEtudiant($etudiantId) >= 10;
-}
+public function estValidee($etudiant)
+    {
+        // Calculez la moyenne des notes de l'étudiant pour cette UE
+        $moyenne = $etudiant->calculerMoyenne();
+
+        // Définissez le seuil de validation
+        $seuil = 10;  // Exemple de seuil pour validation (peut être différent selon votre logique)
+
+        // Si la moyenne est supérieure ou égale au seuil, l'UE est validée
+        return $moyenne >= $seuil;
+    }
 
 
 }

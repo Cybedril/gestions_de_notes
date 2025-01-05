@@ -12,9 +12,10 @@ class EtudiantFactory extends Factory
     public function definition()
     {
         return [
+            'numero_etudiant' => $this->faker->unique()->randomNumber(),  // Ajouter un numéro étudiant
             'nom' => $this->faker->lastName,
             'prenom' => $this->faker->firstName,
-            'matricule' => $this->faker->unique()->numberBetween(1000, 9999),
+            'matricule' => $this->faker->unique()->randomNumber(),
             'date_naissance' => $this->faker->date(),
             'sexe' => $this->faker->randomElement(['M', 'F']),
         ];
