@@ -32,7 +32,7 @@ class UEController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'code' => 'required|unique:unites_enseignement,code',
+            'code' => 'required|unique:unites_enseignement|alpha_num',
             'nom' => 'required',
             'credits_ects' => 'required|integer|min:1|max:30',
             'semestre' => 'required|integer|min:1|max:6',

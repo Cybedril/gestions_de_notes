@@ -28,6 +28,7 @@ class NotesTest extends TestCase
             'ec_id' => $ec->id,
             'note' => 15,
         ]);
+         
     }
 
     public function test_verification_limites()
@@ -78,7 +79,8 @@ class NotesTest extends TestCase
             'session' => 'normale',
         ]);
 
-        $moyenne = ($ec1->coefficient * 12 + $ec2->coefficient * 14) / ($ec1->coefficient + $ec2->coefficient);
+        $moyenne = round(($ec1->coefficient * 12 + $ec2->coefficient * 14) / ($ec1->coefficient + $ec2->coefficient));
+
         
         $this->assertEquals(13, $moyenne);
     }

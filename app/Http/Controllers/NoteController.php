@@ -90,7 +90,7 @@ public function edit($id)
     $note = Note::findOrFail($id);
     $etudiants = Etudiant::all();
     $ecs = Ec::all();
-    return view('notes.edit', compact('note', 'etudiants', 'ecs'));
+    return view('notes.edit', compact('notes', 'etudiants', 'ecs'));
 }
 
     public function results($id)

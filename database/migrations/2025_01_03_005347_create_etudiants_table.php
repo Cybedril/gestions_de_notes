@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('etudiants', function (Blueprint $table) {
             $table->id();
             $table->integer('numero_etudiant')->default(0)->change();
-            $table->string('matricule')->unique();
+            $table->string('matricule')->default();
             $table->string('nom');
             $table->string('prenom');
             $table->string('niveau')->default('L1');
